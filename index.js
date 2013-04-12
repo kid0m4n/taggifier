@@ -71,35 +71,38 @@ Taggifier.prototype._surroundWithTags = function(window) {
 }
 
 Taggifier.prototype._surroundTextWithTags = function(text) {
-  var allWords = text.split(whiteSpaceRegex)
-    , replacements = ''
-    , wordCount
-    , newText
-    , isStartingSpace
+  var self = this
+    , allWords = text.match(/(&nbsp;|\S+)/g)
+    , replacements = []
+    , firstWordStartsWithSpace = text.match(/^\s/)
+    , lastWordEndsWithSpace = text.match(/\s$/)
 
-  for (wordCount = 0; wordCount < allWords.length; wordCount++) {
-    if(wordCount === 0 && text.charAt(0) === ' ') {
-      newText = ' ' + allWords[wordCount]
-      isStartingSpace = true
-    } else {
-      newText = allWords[wordCount]
-      isStartingSpace = false
-    }
+  _.chain(allWords).each(function(word, i) {
+    var isFirst = i === 0
+      , isLast = i === allWords.length - 1
 
-    if ((text.match(longWhiteSpaceRegex) === null || isStartingSpace) && newText.length === 0) {
-      continue
-    }
+    replacements.push(self._convert(word, isFirst, isLast, firstWordStartsWithSpace, lastWordEndsWithSpace))
+  })
 
-    replacements += this._createWrappedAnnotatableText(newText)
+  return replacements.join("")
+}
 
-    if ((wordCount + 1) !== allWords.length || text[text.length - 1] === ' ') {
-      if (!wordCount || !isStartingSpace) {
-        replacements += this._createWrappedAnnotatableText(' ')
-      }
-    }
+Taggifier.prototype._convert = function(word, isFirst, isLast, firstWordStartsWithSpace, lastWordEndsWithSpace) {
+  var replacements = []
+    , addSpaceBeforeFirstWord = isFirst && firstWordStartsWithSpace
+    , wordIsNotTheLastOneOrTheLastWordEndsWithSpace = lastWordEndsWithSpace || !isLast
+
+  if (addSpaceBeforeFirstWord) {
+    replacements.push(this._createWrappedAnnotatableText('&nbsp;'))
   }
 
-  return replacements
+  replacements.push(this._createWrappedAnnotatableText(word))
+
+  if (wordIsNotTheLastOneOrTheLastWordEndsWithSpace) {
+    replacements.push(this._createWrappedAnnotatableText('&nbsp;'))
+  }
+
+  return replacements.join("")
 }
 
 function notHighlightable(node) {
@@ -128,8 +131,19 @@ function isElementNode(node) {
 
 Taggifier.prototype._createWrappedAnnotatableText = function(text) {
   var opts = this._opts
+    , idAttribute = opts.idPrefix ? (' id="' + opts.idPrefix + opts.counterSeparator + (this._counter++)) + '"' : ''
+    , classAttribute = opts.className ? ' class="' + opts.className + '"' : ''
 
-  return '<' + opts.tag + ' id="' + opts.idPrefix + opts.counterSeparator + (this._counter++) + '" class="' + opts.className + '">' + text + '</' + opts.tag + '>'
+  return '<' + opts.tag + idAttribute + classAttribute + '>' + escape(text) + '</' + opts.tag + '>'
+}
+
+function escape(text) {
+  switch(text) {
+    case '&nbsp;':
+      return text
+    default:
+      return _.escape(text)
+  }
 }
 
 function createFragment(document, html) {
