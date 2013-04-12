@@ -61,7 +61,7 @@ Taggifier.prototype._surroundWithTags = function(window) {
 
       parentNode.replaceChild(replacementNode, currentNode)
     } else if (isElementNode(currentNode)) {
-      _.chain(currentNode.childNodes).reverse().each(function(childNode) {
+      _.chain(currentNode.childNodes).toArray().reverse().each(function(childNode) {
         nodesToVisit.unshift(childNode)
       })
     }

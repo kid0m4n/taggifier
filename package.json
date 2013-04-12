@@ -1,6 +1,6 @@
 {
   "name": "taggifier",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A quick and dirty \"tag 'em up\" module",
   "main": "index.js",
   "dependencies": {

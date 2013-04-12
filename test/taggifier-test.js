@@ -42,5 +42,17 @@ describe('Taggifier', function() {
 
       return htmlPromise.should.become('<html><body><div id="b_1" class="a">Hi</div></body></html>')
     })
+
+    it('should retain the order of elements', function() {
+      var htmlPromise = taggifier.process('<html><body><p>Hi</p><div>There</div><article>God</article></body></html>')
+
+      return htmlPromise.should.become('<html><body><p><div id="b_0" class="a">Hi</div></p><div><div id="b_1" class="a">There</div></div><article><div id="b_2" class="a">God</div></article></body></html>')
+    })
+
+    it('should retain the order of elements under other elements', function() {
+      var htmlPromise = taggifier.process('<html><body><section><p>Hi</p><p>God</p></section></body></html>')
+
+      return htmlPromise.should.become('<html><body><section><p><div id="b_0" class="a">Hi</div></p><p><div id="b_1" class="a">God</div></p></section></body></html>')
+    })
   })
 })
