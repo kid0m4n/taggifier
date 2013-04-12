@@ -14,15 +14,15 @@ describe('Taggifier', function() {
     })
 
     it('should surround text and white space with tags', function() {
-      var htmlPromise = taggifier.process('<html><body>This is so cool</body></html>')
+      var htmlPromise = taggifier.process('<html><body>This is cool</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a">&nbsp;</div><div id="b_2" class="a">is</div><div id="b_3" class="a">&nbsp;</div><div id="b_4" class="a">so</div><div id="b_5" class="a">&nbsp;</div><div id="b_6" class="a">cool</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a"> </div><div id="b_2" class="a">is</div><div id="b_3" class="a"> </div><div id="b_4" class="a">cool</div></body></html>')
     })
 
     it('should traverse elements surrounded by text', function() {
       var htmlPromise = taggifier.process('<html><body>This is <em>so</em> cool</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a">&nbsp;</div><div id="b_2" class="a">is</div><div id="b_3" class="a">&nbsp;</div><em><div id="b_4" class="a">so</div></em><div id="b_5" class="a">&nbsp;</div><div id="b_6" class="a">cool</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a"> </div><div id="b_2" class="a">is</div><div id="b_3" class="a"> </div><em><div id="b_4" class="a">so</div></em><div id="b_5" class="a"> </div><div id="b_6" class="a">cool</div></body></html>')
     })
 
     it('should not mess with non body nodes', function() {
@@ -64,31 +64,37 @@ describe('Taggifier', function() {
     it('should handle new lines', function() {
       var htmlPromise = taggifier.process('<html><body>42\r\n42</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a">&nbsp;</div><div id="b_2" class="a">42</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div><div id="b_2" class="a">42</div></body></html>')
     })
 
     it('should handle multiple spaces at the start', function() {
       var htmlPromise = taggifier.process('<html><body>  42</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp;</div><div id="b_1" class="a">42</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a"> </div><div id="b_1" class="a">42</div></body></html>')
     })
 
     it('should handle multiple spaces between words', function() {
       var htmlPromise = taggifier.process('<html><body>42  42</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a">&nbsp;</div><div id="b_2" class="a">42</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div><div id="b_2" class="a">42</div></body></html>')
     })
 
     it('should handle multiple spaces at the end', function() {
       var htmlPromise = taggifier.process('<html><body>42  </body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a">&nbsp;</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div></body></html>')
+    })
+
+    it('should handle &nbsp;', function() {
+      var htmlPromise = taggifier.process('<html><body>&nbsp; 42</body></html>')
+
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp; </div><div id="b_1" class="a">42</div></body></html>')
     })
 
     it('should handle html escape sequences', function() {
       var htmlPromise = taggifier.process('<html><body>This &lt; and that &gt;</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a">&nbsp;</div><div id="b_2" class="a">&lt;</div><div id="b_3" class="a">&nbsp;</div><div id="b_4" class="a">and</div><div id="b_5" class="a">&nbsp;</div><div id="b_6" class="a">that</div><div id="b_7" class="a">&nbsp;</div><div id="b_8" class="a">&gt;</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a"> </div><div id="b_2" class="a">&lt;</div><div id="b_3" class="a"> </div><div id="b_4" class="a">and</div><div id="b_5" class="a"> </div><div id="b_6" class="a">that</div><div id="b_7" class="a"> </div><div id="b_8" class="a">&gt;</div></body></html>')
     })
   })
 })

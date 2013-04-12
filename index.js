@@ -55,7 +55,7 @@ Taggifier.prototype._surroundWithTags = function(window) {
     }
 
     if (isTextNode(currentNode)) {
-      replacementText = this._surroundTextWithTags.call(this, currentNode.data)
+      replacementText = this._surroundTextWithTags(currentNode.data)
       replacementNode = createFragment(document, replacementText)
       parentNode = currentNode.parentNode
 
@@ -72,10 +72,10 @@ Taggifier.prototype._surroundWithTags = function(window) {
 
 Taggifier.prototype._surroundTextWithTags = function(text) {
   var self = this
-    , allWords = text.match(/(&nbsp;|\S+)/g)
+    , allWords = text.match(/\xA0\s*|[^ \t\r\n\v\f]+/g)
     , replacements = []
-    , firstWordStartsWithSpace = text.match(/^\s/)
-    , lastWordEndsWithSpace = text.match(/\s$/)
+    , firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
+    , lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
 
   _.chain(allWords).each(function(word, i) {
     var isFirst = i === 0
@@ -88,18 +88,17 @@ Taggifier.prototype._surroundTextWithTags = function(text) {
 }
 
 Taggifier.prototype._convert = function(word, isFirst, isLast, firstWordStartsWithSpace, lastWordEndsWithSpace) {
-  var replacements = []
-    , addSpaceBeforeFirstWord = isFirst && firstWordStartsWithSpace
-    , wordIsNotTheLastOneOrTheLastWordEndsWithSpace = lastWordEndsWithSpace || !isLast
+  var wordIsNbsp = /^\xA0\s*$/.test(word)
+    , replacements = []
 
-  if (addSpaceBeforeFirstWord) {
-    replacements.push(this._createWrappedAnnotatableText('&nbsp;'))
+  if (!wordIsNbsp && isFirst && firstWordStartsWithSpace) {
+    replacements.push(this._createWrappedAnnotatableText(' '))
   }
 
   replacements.push(this._createWrappedAnnotatableText(word))
 
-  if (wordIsNotTheLastOneOrTheLastWordEndsWithSpace) {
-    replacements.push(this._createWrappedAnnotatableText('&nbsp;'))
+  if (!wordIsNbsp && (lastWordEndsWithSpace || !isLast)) {
+    replacements.push(this._createWrappedAnnotatableText(' '))
   }
 
   return replacements.join("")
@@ -134,16 +133,7 @@ Taggifier.prototype._createWrappedAnnotatableText = function(text) {
     , idAttribute = opts.idPrefix ? (' id="' + opts.idPrefix + opts.counterSeparator + (this._counter++)) + '"' : ''
     , classAttribute = opts.className ? ' class="' + opts.className + '"' : ''
 
-  return '<' + opts.tag + idAttribute + classAttribute + '>' + escape(text) + '</' + opts.tag + '>'
-}
-
-function escape(text) {
-  switch(text) {
-    case '&nbsp;':
-      return text
-    default:
-      return _.escape(text)
-  }
+  return '<' + opts.tag + idAttribute + classAttribute + '>' + _.escape(text) + '</' + opts.tag + '>'
 }
 
 function createFragment(document, html) {
