@@ -72,7 +72,7 @@ Taggifier.prototype._surroundWithTags = function(window) {
 
 Taggifier.prototype._surroundTextWithTags = function(text) {
   var self = this
-    , allWords = text.match(/\xA0\s*|[^ \t\r\n\v\f]+/g)
+    , allWords = text.match(/\xA0\s*|[^ \xA0\t\r\n\v\f]+/g)
     , replacements = []
     , firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
     , lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
@@ -80,14 +80,15 @@ Taggifier.prototype._surroundTextWithTags = function(text) {
   _.chain(allWords).each(function(word, i) {
     var isFirst = i === 0
       , isLast = i === allWords.length - 1
+      , wordIsFollowedByNbsp = !isLast && allWords[i + 1] === '\xA0'
 
-    replacements.push(self._convert(word, isFirst, isLast, firstWordStartsWithSpace, lastWordEndsWithSpace))
+    replacements.push(self._convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace))
   })
 
   return replacements.join("")
 }
 
-Taggifier.prototype._convert = function(word, isFirst, isLast, firstWordStartsWithSpace, lastWordEndsWithSpace) {
+Taggifier.prototype._convert = function(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace) {
   var wordIsNbsp = /^\xA0\s*$/.test(word)
     , replacements = []
 
@@ -97,7 +98,7 @@ Taggifier.prototype._convert = function(word, isFirst, isLast, firstWordStartsWi
 
   replacements.push(this._createWrappedAnnotatableText(word))
 
-  if (!wordIsNbsp && (lastWordEndsWithSpace || !isLast)) {
+  if (!wordIsNbsp && !wordIsFollowedByNbsp && (lastWordEndsWithSpace || !isLast)) {
     replacements.push(this._createWrappedAnnotatableText(' '))
   }
 

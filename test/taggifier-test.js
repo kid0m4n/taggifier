@@ -56,9 +56,9 @@ describe('Taggifier', function() {
     })
 
     it('should handle non breaking space', function() {
-      var htmlPromise = taggifier.process('<html><body>&nbsp;42</body></html>')
+      var htmlPromise = taggifier.process('<html><body>&nbsp;42&nbsp;</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp;</div><div id="b_1" class="a">42</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp;</div><div id="b_1" class="a">42</div><div id="b_2" class="a">&nbsp;</div></body></html>')
     })
 
     it('should handle new lines', function() {
