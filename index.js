@@ -80,7 +80,8 @@ Taggifier.prototype._surroundTextWithTags = function(text) {
   _.chain(allWords).each(function(word, i) {
     var isFirst = i === 0
       , isLast = i === allWords.length - 1
-      , wordIsFollowedByNbsp = !isLast && allWords[i + 1] === '\xA0'
+      , nextWord = allWords[i + 1]
+      , wordIsFollowedByNbsp = !isLast && nextWord.charAt(0) === '\xA0'
 
     replacements.push(self._convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace))
   })
