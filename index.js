@@ -80,20 +80,17 @@ function surroundTextWithTags(text) {
   }
 
   allWords = text.match(/\xA0\s*|[^ \xA0\t\r\n\v\f]+/g)
-  replacements = []
   firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
   lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
 
-  _(allWords).each(function(word, i) {
+  return _(allWords).reduce(function(replacements, word, i) {
     var isFirst = i === 0
       , isLast = i === allWords.length - 1
       , nextWord = allWords[i + 1]
       , wordIsFollowedByNbsp = !isLast && nextWord.charAt(0) === '\xA0'
 
-    replacements.push(convert.call(self, word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace))
-  })
-
-  return replacements.join('')
+    return replacements + convert.call(self, word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace)
+  }, '')
 }
 
 function convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace) {
