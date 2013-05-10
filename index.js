@@ -27,14 +27,14 @@ Taggifier.prototype.process = function(html) {
 
   return Q.ninvoke(jsdom, 'env', { html: html })
   .then(function(window) {
-    var processHtml = self._surroundWithTags(window)
+    var processHtml = surroundWithTags.call(self, window)
     window.close()
 
     return processHtml
   })
 }
 
-Taggifier.prototype._surroundWithTags = function(window) {
+function surroundWithTags(window) {
   var document = window.document
     , body = document.getElementsByTagName('body')[0]
     , nodesToVisit = []
@@ -55,7 +55,7 @@ Taggifier.prototype._surroundWithTags = function(window) {
     }
 
     if (isTextNode(currentNode)) {
-      replacementText = this._surroundTextWithTags(currentNode.data)
+      replacementText = surroundTextWithTags.call(this, currentNode.data)
       replacementNode = createFragment(document, replacementText)
       parentNode = currentNode.parentNode
 
@@ -70,13 +70,13 @@ Taggifier.prototype._surroundWithTags = function(window) {
   return document.innerHTML
 }
 
-Taggifier.prototype._surroundTextWithTags = function(text) {
+function surroundTextWithTags(text) {
   var self = this
     , allSpace = text.match(/^(\xA0|\s)+$/g)
     , allWords, replacements, firstWordStartsWithSpace, lastWordEndsWithSpace
 
   if (allSpace) {
-    return self._createWrappedAnnotatableText(text)
+    return createWrappedAnnotatableText.call(self, text)
   }
 
   allWords = text.match(/\xA0\s*|[^ \xA0\t\r\n\v\f]+/g)
@@ -90,24 +90,24 @@ Taggifier.prototype._surroundTextWithTags = function(text) {
       , nextWord = allWords[i + 1]
       , wordIsFollowedByNbsp = !isLast && nextWord.charAt(0) === '\xA0'
 
-    replacements.push(self._convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace))
+    replacements.push(convert.call(self, word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace))
   })
 
   return replacements.join("")
 }
 
-Taggifier.prototype._convert = function(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace) {
+function convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace) {
   var wordIsNbsp = /^\xA0\s*$/.test(word)
     , replacements = []
 
   if (!wordIsNbsp && isFirst && firstWordStartsWithSpace) {
-    replacements.push(this._createWrappedAnnotatableText(' '))
+    replacements.push(createWrappedAnnotatableText.call(this, ' '))
   }
 
-  replacements.push(this._createWrappedAnnotatableText(word))
+  replacements.push(createWrappedAnnotatableText.call(this, word))
 
   if (!wordIsNbsp && !wordIsFollowedByNbsp && (lastWordEndsWithSpace || !isLast)) {
-    replacements.push(this._createWrappedAnnotatableText(' '))
+    replacements.push(createWrappedAnnotatableText.call(this, ' '))
   }
 
   return replacements.join("")
@@ -137,7 +137,7 @@ function isElementNode(node) {
   return node.nodeType === 1
 }
 
-Taggifier.prototype._createWrappedAnnotatableText = function(text) {
+function createWrappedAnnotatableText(text) {
   var opts = this._opts
     , idAttribute = opts.idPrefix ? (' id="' + opts.idPrefix + opts.counterSeparator + (this._counter++)) + '"' : ''
     , classAttribute = opts.className ? ' class="' + opts.className + '"' : ''
