@@ -102,6 +102,5 @@ describe('Taggifier', function() {
 
       return htmlPromise.should.become('<html><body><section><div id="b_0" class="a">Hello</div></section><div id="b_1" class="a"> </div><section><div id="b_2" class="a">World</div></section></body></html>')
     })
-
   })
 })
