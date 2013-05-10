@@ -83,14 +83,14 @@ function surroundTextWithTags(text) {
   firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
   lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
 
-  return _(allWords).reduce(function(replacements, word, i) {
+  return _(allWords).map(function(word, i) {
     var isFirst = i === 0
       , isLast = i === allWords.length - 1
       , nextWord = allWords[i + 1]
       , wordIsFollowedByNbsp = !isLast && nextWord.charAt(0) === '\xA0'
 
-    return replacements + convert.call(self, word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace)
-  }, '')
+    return convert.call(self, word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace)
+  }).join('')
 }
 
 function convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace) {
