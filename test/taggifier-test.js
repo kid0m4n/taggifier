@@ -96,5 +96,12 @@ describe('Taggifier', function() {
 
       return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a"> </div><div id="b_2" class="a">&lt;</div><div id="b_3" class="a"> </div><div id="b_4" class="a">and</div><div id="b_5" class="a"> </div><div id="b_6" class="a">that</div><div id="b_7" class="a"> </div><div id="b_8" class="a">&gt;</div></body></html>')
     })
+
+    it('should handle a text node with only white space', function() {
+      var htmlPromise = taggifier.process('<html><body><section>Hello</section> <section>World</section></body></html>')
+
+      return htmlPromise.should.become('<html><body><section><div id="b_0" class="a">Hello</div></section><div id="b_1" class="a"> </div><section><div id="b_2" class="a">World</div></section></body></html>')
+    })
+
   })
 })

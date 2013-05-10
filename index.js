@@ -72,10 +72,17 @@ Taggifier.prototype._surroundWithTags = function(window) {
 
 Taggifier.prototype._surroundTextWithTags = function(text) {
   var self = this
-    , allWords = text.match(/\xA0\s*|[^ \xA0\t\r\n\v\f]+/g)
-    , replacements = []
-    , firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
-    , lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
+    , allSpace = text.match(/^(\xA0|\s)+$/g)
+    , allWords, replacements, firstWordStartsWithSpace, lastWordEndsWithSpace
+
+  if (allSpace) {
+    return self._createWrappedAnnotatableText(text)
+  }
+
+  allWords = text.match(/\xA0\s*|[^ \xA0\t\r\n\v\f]+/g)
+  replacements = []
+  firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
+  lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
 
   _.chain(allWords).each(function(word, i) {
     var isFirst = i === 0
