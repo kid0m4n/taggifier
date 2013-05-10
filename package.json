@@ -6,7 +6,6 @@
   "dependencies": {
     "jsdom": "~0.5.5",
     "q": "~0.9.2",
-    "underscore": "~1.4.4",
     "remedial": "~1.0.7",
     "lodash": "~1.2.1"
   },
