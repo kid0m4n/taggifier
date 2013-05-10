@@ -1,5 +1,5 @@
 var Q = require('q')
-  , _ = require('underscore')
+  , _ = require('lodash')
   , jsdom = require('jsdom').jsdom
   , whiteSpaceRegex = /\s/
   , longWhiteSpaceRegex = /\s{2,1000}/g
@@ -61,7 +61,7 @@ function surroundWithTags(window) {
 
       parentNode.replaceChild(replacementNode, currentNode)
     } else if (isElementNode(currentNode)) {
-      _.chain(currentNode.childNodes).toArray().reverse().each(function(childNode) {
+      _(currentNode.childNodes).toArray().reverse().each(function(childNode) {
         nodesToVisit.unshift(childNode)
       })
     }
@@ -84,7 +84,7 @@ function surroundTextWithTags(text) {
   firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
   lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
 
-  _.chain(allWords).each(function(word, i) {
+  _(allWords).each(function(word, i) {
     var isFirst = i === 0
       , isLast = i === allWords.length - 1
       , nextWord = allWords[i + 1]
