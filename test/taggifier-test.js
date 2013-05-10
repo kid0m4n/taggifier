@@ -55,16 +55,16 @@ describe('Taggifier', function() {
       return htmlPromise.should.become('<html><body><section><p><div id="b_0" class="a">Hi</div></p><p><div id="b_1" class="a">God</div></p></section></body></html>')
     })
 
-    it('should handle non breaking space', function() {
-      var htmlPromise = taggifier.process('<html><body>&nbsp;42&nbsp;&nbsp;</body></html>')
-
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp;</div><div id="b_1" class="a">42</div><div id="b_2" class="a">&nbsp;&nbsp;</div></body></html>')
-    })
-
     it('should handle new lines', function() {
       var htmlPromise = taggifier.process('<html><body>42\r\n42</body></html>')
 
       return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div><div id="b_2" class="a">42</div></body></html>')
+    })
+
+    it('should handle html escape sequences', function() {
+      var htmlPromise = taggifier.process('<html><body>This &lt; and that &gt;</body></html>')
+
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a"> </div><div id="b_2" class="a">&lt;</div><div id="b_3" class="a"> </div><div id="b_4" class="a">and</div><div id="b_5" class="a"> </div><div id="b_6" class="a">that</div><div id="b_7" class="a"> </div><div id="b_8" class="a">&gt;</div></body></html>')
     })
 
     it('should handle multiple spaces at the start', function() {
@@ -79,10 +79,10 @@ describe('Taggifier', function() {
       return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div><div id="b_2" class="a">42</div></body></html>')
     })
 
-    it('should handle multiple spaces at the end', function() {
-      var htmlPromise = taggifier.process('<html><body>42  </body></html>')
+    it('should handle non breaking space', function() {
+      var htmlPromise = taggifier.process('<html><body>&nbsp;42&nbsp;&nbsp;</body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp;</div><div id="b_1" class="a">42</div><div id="b_2" class="a">&nbsp;&nbsp;</div></body></html>')
     })
 
     it('should handle &nbsp;', function() {
@@ -91,16 +91,22 @@ describe('Taggifier', function() {
       return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp; </div><div id="b_1" class="a">42</div></body></html>')
     })
 
-    it('should handle html escape sequences', function() {
-      var htmlPromise = taggifier.process('<html><body>This &lt; and that &gt;</body></html>')
+    it('should handle multiple spaces at the end', function() {
+      var htmlPromise = taggifier.process('<html><body>42  </body></html>')
 
-      return htmlPromise.should.become('<html><body><div id="b_0" class="a">This</div><div id="b_1" class="a"> </div><div id="b_2" class="a">&lt;</div><div id="b_3" class="a"> </div><div id="b_4" class="a">and</div><div id="b_5" class="a"> </div><div id="b_6" class="a">that</div><div id="b_7" class="a"> </div><div id="b_8" class="a">&gt;</div></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">42</div><div id="b_1" class="a"> </div></body></html>')
     })
 
     it('should handle a text node with only white space', function() {
-      var htmlPromise = taggifier.process('<html><body><section>Hello</section> <section>World</section></body></html>')
+      var htmlPromise = taggifier.process('<html><body> </body></html>')
 
-      return htmlPromise.should.become('<html><body><section><div id="b_0" class="a">Hello</div></section><div id="b_1" class="a"> </div><section><div id="b_2" class="a">World</div></section></body></html>')
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a"> </div></body></html>')
+    })
+
+    it('should handle a text node with only &nbsp;', function() {
+      var htmlPromise = taggifier.process('<html><body>&nbsp;</body></html>')
+
+      return htmlPromise.should.become('<html><body><div id="b_0" class="a">&nbsp;</div></body></html>')
     })
   })
 })
