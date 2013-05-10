@@ -93,7 +93,7 @@ function surroundTextWithTags(text) {
     replacements.push(convert.call(self, word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace))
   })
 
-  return replacements.join("")
+  return replacements.join('')
 }
 
 function convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWithSpace, lastWordEndsWithSpace) {
@@ -110,7 +110,7 @@ function convert(word, isFirst, isLast, wordIsFollowedByNbsp, firstWordStartsWit
     replacements.push(createWrappedAnnotatableText.call(this, ' '))
   }
 
-  return replacements.join("")
+  return replacements.join('')
 }
 
 function notHighlightable(node) {
