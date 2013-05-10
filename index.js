@@ -7,7 +7,7 @@ var Q = require('q')
   , ignoredNodeTypes = ['SCRIPT', '#comment']
 
 var Taggifier = module.exports = function(opts) {
-  this._opts = _.extend({
+  this.opts_ = _.extend({
     tag: 'span',
     className: 'highlightableElement',
     idPrefix: 'textHighlight',
@@ -17,13 +17,13 @@ var Taggifier = module.exports = function(opts) {
 }
 
 Taggifier.prototype.end = function() {
-  this._opts = null
+  this.opts_ = null
 }
 
 Taggifier.prototype.process = function(html) {
   var self = this
 
-  self._counter = self._opts.start
+  self.counter_ = self.opts_.start
 
   return Q.ninvoke(jsdom, 'env', { html: html })
   .then(function(window) {
@@ -138,8 +138,8 @@ function isElementNode(node) {
 }
 
 function createWrappedAnnotatableText(text) {
-  var opts = this._opts
-    , idAttribute = opts.idPrefix ? (' id="' + opts.idPrefix + opts.counterSeparator + (this._counter++)) + '"' : ''
+  var opts = this.opts_
+    , idAttribute = opts.idPrefix ? (' id="' + opts.idPrefix + opts.counterSeparator + (this.counter_++)) + '"' : ''
     , classAttribute = opts.className ? ' class="' + opts.className + '"' : ''
 
   return '<' + opts.tag + idAttribute + classAttribute + '>' + _.escape(text) + '</' + opts.tag + '>'
