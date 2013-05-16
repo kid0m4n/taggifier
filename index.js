@@ -72,7 +72,7 @@ function surroundWithTags(window) {
 
 function surroundTextWithTags(text) {
   var self = this
-    , allSpace = text.match(/^(\xA0|\s)+$/g)
+    , allSpace = text.match(/^[\xA0\s]+$/g)
     , allWords, replacements, firstWordStartsWithSpace, lastWordEndsWithSpace
 
   if (allSpace) {
@@ -80,8 +80,8 @@ function surroundTextWithTags(text) {
   }
 
   allWords = text.match(/\xA0\s*|[^ \xA0\t\r\n\v\f]+/g)
-  firstWordStartsWithSpace = text.match(/^(\xA0|\s)/)
-  lastWordEndsWithSpace = text.match(/(\xA0|\s)$/)
+  firstWordStartsWithSpace = text.match(/^[\xA0\s]/)
+  lastWordEndsWithSpace = text.match(/[\xA0\s]$/)
 
   return _(allWords).map(function(word, i) {
     var isFirst = i === 0
